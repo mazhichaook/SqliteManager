@@ -47,12 +47,12 @@ SqliteManager *instance;
 }
 -(BOOL)exeSql:(NSString *)sql{
 
-    return sqlite3_exec(db, sql.UTF8String, nil, nil, nil);
+    return (sqlite3_exec(db, sql.UTF8String, nil, nil, nil) == SQLITE_OK);
 }
 -(BOOL)createTableWithClass:(Class)className{
     unsigned int count;
     
-    NSMutableString *sql = [NSMutableString stringWithFormat:@"CREATE TABLE IF NOT EXISTS T_Person ("];
+    NSMutableString *sql = [NSMutableString stringWithFormat:@"CREATE TABLE IF NOT EXISTS T_Person ('id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"];
     objc_property_t *properties = class_copyPropertyList(className, &count);
     
     for (int i = 0; i < count; i++) {
@@ -64,9 +64,9 @@ SqliteManager *instance;
         NSString *proName = [[NSString alloc]initWithUTF8String:name];
         
         if (count == 1 || (i == count - 1)) {
-            [sql appendFormat:@"'%@' TEXT);", proName];
+            [sql appendFormat:@" '%@' TEXT );", proName];
         }else{
-            [sql appendFormat:@"'%@' TEXT,", proName];
+            [sql appendFormat:@" '%@' TEXT, ", proName];
         }
     }
     NSLog(@"%@",sql);
